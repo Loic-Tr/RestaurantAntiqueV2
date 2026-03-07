@@ -1,0 +1,124 @@
+
+// Define your variable overrides here
+$primary: #906427;
+$secondary: #B6AC97;
+$dark: #392C1E;
+$black: #292222;
+$light: #F5F5F5;
+$success: #7ed321;
+$info: #9013fe;
+$warning: #f5a623;
+$danger: #d0021b;
+$font-family-sans-serif: "Montserrat", sans-serif !default;
+$font-family-serif: "Hind Madurai", serif !default;
+@import url('https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@300;400;500;600;700&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons";
+
+// General style overrides and custom classes
+html{
+    position : relative;
+    min-height : 100%;
+}
+
+main{
+    margin-bottom : 250px;
+}
+
+footer.footer {
+  padding: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+p{
+    font-family: serif;
+}
+
+.hero-scene{
+    position: relative;
+    margin-bottom: 15px;
+    &::before{
+        content:"";
+        position: absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        background-image: url(../images/FondHeroScene.jpg);
+        background-size: cover;
+        filter: brightness(0.3);
+    }
+
+    *{
+        //Positionner les éléments devant le ::before
+        position:relative;
+    }
+
+    .hero-scene-content{
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.image-card{
+    position:relative;
+    &:hover{
+        .titre-image,.action-image-buttons{
+            opacity: 1;
+        }
+        img{
+            filter: brightness(0.3);
+        }
+    }
+
+    img{
+        height: 200px;
+        transition: all 0.3s;
+    }
+
+    .titre-image{
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: all 0.3s;
+    }
+
+    .action-image-buttons{
+        position: absolute;
+        top: 0px;
+        left:0%;
+        width: 100%;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+        transition: all 0.3s;
+        opacity: 0;
+    }
+}
+
+.form-label{
+        color: $primary;
+    }
+
+.image-modal{
+    img{
+        width: 400px;
+        height: 260px;
+    }}
+
+.allreservations{
+    a{
+        display: block;
+        color: $black;
+        padding:10px;
+    }
+}
