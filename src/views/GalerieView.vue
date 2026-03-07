@@ -1,7 +1,10 @@
 <template>
-<div class="container py-4">
-
+<div>
+   <div class="hero-scene text-center text-white">
+      <div class="hero-scene-content">
   <h1 class="text-center mb-4">Galerie</h1>
+      </div>
+  </div>
 
   <!-- bouton ajout -->
   <div class="text-center mb-4">
