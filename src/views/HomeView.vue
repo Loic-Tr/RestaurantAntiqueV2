@@ -7,7 +7,7 @@
     <div class="hero-scene-content">
         <p>Le chef Arnaud Michant vous invite au</p>
         <h1>Quai Antique</h1>
-        <button class="btn btn-primary">Réserver</button>
+        <button class="btn btn-primary" href="/reservation">Réserver</button>
     </div>
 </div>
 
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="text-center pt-4">
-            <a href="#" class="btn btn-primary">Nos menus</a>
+            <a href="/carte" class="btn btn-primary">Nos menus</a>
         </div>
     </div>
 </article>
