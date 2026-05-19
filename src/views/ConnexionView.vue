@@ -38,8 +38,8 @@
                   </div>
 
                   <div class="text-center">
-                      <button class="btn btn-primary">
-                          Se connecter
+                      <button class="btn btn-primary" type="submit" :disabled="isLoading">
+                        {{ isLoading ? "Connexion..." : "Se connecter" }}
                       </button>
                   </div>
 
@@ -63,31 +63,37 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import { loginRequest } from "@/services/authService"
 
 const email = ref("")
 const password = ref("")
 const errorMessage = ref("")
+const isLoading = ref(false)
 
 const router = useRouter()
 
-function login(){
+async function login() {
 
-const adminEmail = "admin@test.com"
-const adminPassword = "1234"
+  errorMessage.value = ""
+  isLoading.value = true
 
-if(email.value === adminEmail && password.value === adminPassword){
+  try {
 
-localStorage.setItem("isAdmin","true")
+    await loginRequest(email.value, password.value)
 
-router.push("/")
+    router.push("/")
 
-}else{
+  } catch (error) {
 
-errorMessage.value = "Email ou mot de passe incorrect"
+    errorMessage.value = "Email ou mot de passe incorrect"
 
-}
+  } finally {
 
+    isLoading.value = false
+
+  }
 }
 </script>

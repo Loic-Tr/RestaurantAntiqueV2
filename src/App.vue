@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+
+import { useRouter } from "vue-router"
+import { isAuthenticated, logout } from "@/services/authService"
+
+const router = useRouter()
+
+function signout() {
+  logout()
+  router.push("/connexion")
+}
 </script>
 
 <template>
@@ -24,11 +34,13 @@ import { RouterLink, RouterView } from 'vue-router'
         <li class="nav-item">
           <a class="nav-link" href="/reservation">Les réservations</a>
         </li>
-        <li class="nav-item" data-show="disconnected">
+        <li class="nav-item" v-if="!isAuthenticated">
           <a class="nav-link" href="/connexion">Connexion</a>
         </li>
-        <li class="nav-item" data-show="connected">
-          <button class="nav-link" id="btnDeconnexion">Déconnexion</button>
+        <li class="nav-item" v-if="isAuthenticated">
+          <button class="nav-link" @click="signout">
+            Déconnexion
+          </button>
         </li>
       </ul>
     </div>
