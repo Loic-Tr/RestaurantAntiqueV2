@@ -5,6 +5,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 import { createBootstrap, Components, Directives } from 'bootstrap-vue-next'
 
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 import './assets/custom.scss'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
@@ -21,5 +23,16 @@ app.use(
     directives: Directives
   })
 )
-
+app.use(Toast, {
+  position: 'top-right',
+  timeout: 3000,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: false,
+  closeButton: 'button',
+  icon: true,
+})
 app.mount('#app')

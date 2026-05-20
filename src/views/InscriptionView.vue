@@ -66,6 +66,7 @@
           class="form-control"
           v-model="form.password"
           :class="passwordClass"
+          placeholder="Entrez votre mot de passe"
         >
 
         <div class="invalid-feedback">
@@ -84,6 +85,7 @@
           class="form-control"
           v-model="form.passwordConfirm"
           :class="confirmPasswordClass"
+          placeholder="Confirmez votre mot de passe"
         >
 
         <div class="invalid-feedback">
@@ -95,8 +97,8 @@
       </div>
 
       <div class="text-center">
-        <button class="btn btn-primary">
-          Inscription
+        <button class="btn btn-primary" type="submit" :disabled="loading">
+           {{ loading ? "Inscription en cours..." : "S'inscrire" }}
         </button>
       </div>
 
@@ -109,11 +111,15 @@
 </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+
+export default defineComponent({
 
   data() {
     return {
+      loading: false,
+
       form: {
         nom: "",
         prenom: "",
@@ -126,54 +132,116 @@ export default {
 
   computed: {
 
-    emailClass() {
+    emailClass(): string {
       if (!this.form.email) return ""
 
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return regex.test(this.form.email) ? "is-valid" : "is-invalid"
+
+      return regex.test(this.form.email)
+        ? "is-valid"
+        : "is-invalid"
     },
 
-    passwordClass() {
+    passwordClass(): string {
       if (!this.form.password) return ""
 
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
-      return regex.test(this.form.password) ? "is-valid" : "is-invalid"
+      const regex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
+
+      return regex.test(this.form.password)
+        ? "is-valid"
+        : "is-invalid"
     },
 
-    confirmPasswordClass() {
+    confirmPasswordClass(): string {
       if (!this.form.passwordConfirm) return ""
 
       return this.form.password === this.form.passwordConfirm
         ? "is-valid"
         : "is-invalid"
+    },
+
+    isFormValid(): boolean {
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/
+
+      return (
+        this.form.nom.length > 1 &&
+        this.form.prenom.length > 1 &&
+        emailRegex.test(this.form.email) &&
+        passwordRegex.test(this.form.password) &&
+        this.form.password === this.form.passwordConfirm
+      )
     }
 
   },
 
   methods: {
 
-    inputClass(value) {
+    inputClass(value: string): string {
+
       if (!value) return ""
-      return value.length > 1 ? "is-valid" : "is-invalid"
+
+      return value.length > 1
+        ? "is-valid"
+        : "is-invalid"
     },
 
-    inscription() {
+    async inscription(): Promise<void> {
 
-      if (
-        this.form.nom &&
-        this.form.prenom &&
-        this.form.email &&
-        this.form.password &&
-        this.form.password === this.form.passwordConfirm
-      ) {
-        console.log("Formulaire envoyé", this.form)
-      } else {
-        alert("Veuillez corriger le formulaire")
+      if (!this.isFormValid) {
+        this.$toast.error("Veuillez corriger le formulaire")
+        return
       }
 
+      this.loading = true
+
+      try {
+
+        const response = await fetch(
+          "http://localhost:8080/api/registration",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              firstName: this.form.prenom,
+              lastName: this.form.nom,
+              email: this.form.email,
+              password: this.form.password
+            })
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de l'inscription")
+        }
+
+        this.$toast.success(
+          `Inscription réussie ${this.form.prenom}`
+        )
+
+        window.location.href = "/connexion"
+
+      } catch (error) {
+
+        console.error(error)
+
+        this.$toast.error("Une erreur est survenue")
+
+      } finally {
+
+        this.loading = false
+      }
     }
 
   }
 
-}
+})
 </script>
