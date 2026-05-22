@@ -67,6 +67,9 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { loginRequest } from "@/services/authService"
+import { useToast } from "vue-toastification"
+
+const toast = useToast()
 
 const email = ref("")
 const password = ref("")
@@ -83,12 +86,14 @@ async function login() {
   try {
 
     await loginRequest(email.value, password.value)
+    toast.success("Connexion réussie !")
 
     router.push("/")
 
   } catch (error) {
 
     errorMessage.value = "Email ou mot de passe incorrect"
+    toast.error("Email ou mot de passe incorrect")
 
   } finally {
 

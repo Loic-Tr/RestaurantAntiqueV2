@@ -113,6 +113,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
+import { useToast } from "vue-toastification"
+
+const toast = useToast()
 
 export default defineComponent({
 
@@ -193,7 +196,7 @@ export default defineComponent({
     async inscription(): Promise<void> {
 
       if (!this.isFormValid) {
-        this.$toast.error("Veuillez corriger le formulaire")
+        toast.error("Veuillez corriger le formulaire")
         return
       }
 
@@ -202,7 +205,7 @@ export default defineComponent({
       try {
 
         const response = await fetch(
-          "http://localhost:8080/api/registration",
+          "http://localhost:8000/api/registration",
           {
             method: "POST",
 
@@ -223,7 +226,7 @@ export default defineComponent({
           throw new Error("Erreur lors de l'inscription")
         }
 
-        this.$toast.success(
+        toast.success(
           `Inscription réussie ${this.form.prenom}`
         )
 
@@ -233,7 +236,7 @@ export default defineComponent({
 
         console.error(error)
 
-        this.$toast.error("Une erreur est survenue")
+        toast.error("Une erreur est survenue")
 
       } finally {
 
