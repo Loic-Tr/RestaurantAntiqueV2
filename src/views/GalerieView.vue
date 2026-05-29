@@ -1,229 +1,293 @@
 <template>
-<div>
-   <div class="hero-scene text-center text-white">
+  <div>
+    <div class="hero-scene text-center text-white">
       <div class="hero-scene-content">
-  <h1 class="text-center mb-4">Galerie</h1>
+        <h1 class="mb-4">Galerie</h1>
       </div>
-  </div>
+    </div>
 
-  <!-- bouton ajout -->
-  <div class="text-center mb-4">
-    <button
-      v-if="isAdmin"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#EditionPhotoModal"
-      @click="prepareAdd"
-    >
-      Ajouter une photo
-    </button>
-  </div>
+    <div class="text-center mb-4">
+      <button
+        v-if="isAdmin"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#photoModal"
+        @click="openCreate"
+      >
+        Ajouter une photo
+      </button>
+    </div>
 
-  <!-- galerie -->
-  <div class="row row-cols-2 row-cols-lg-3">
+    <div v-if="loading" class="text-center my-3">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
 
-    <div
-      class="col p-3"
-      v-for="(image,index) in images"
-      :key="index"
-    >
-      <div class="image-card text-white">
+    <div v-else class="row row-cols-2 row-cols-lg-3">
+      <div class="col p-3" v-for="img in images" :key="img.id">
+        <div class="image-card text-white position-relative">
 
-        <img
-          :src="image.url"
-          class="rounded w-100"
-          :alt="image.titre"
-        />
+          <img
+            :src="img.url"
+            class="rounded w-100"
+            :alt="img.titre"
+          />
 
-        <p class="titre-image">{{ image.titre }}</p>
+          <p class="titre-image">{{ img.titre }}</p>
 
-        <div v-if="isAdmin" class="action-image-buttons">
+          <div v-if="isAdmin" class="action-image-buttons">
+            <button
+              class="btn btn-outline-light me-2"
+              data-bs-toggle="modal"
+              data-bs-target="#photoModal"
+              @click="openEdit(img)"
+            >
+              ✏️
+            </button>
 
-          <button
-            class="btn btn-outline-light me-2"
-            data-bs-toggle="modal"
-            data-bs-target="#EditionPhotoModal"
-            @click="prepareEdit(image,index)"
-          >
-            ✏️
-          </button>
-
-          <button
-            class="btn btn-outline-light"
-            data-bs-toggle="modal"
-            data-bs-target="#SuppressionPhotoModal"
-            @click="prepareDelete(index)"
-          >
-            🗑
-          </button>
+            <button
+              class="btn btn-outline-light"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              @click="setDelete(img)"
+            >
+              🗑
+            </button>
+          </div>
 
         </div>
+      </div>
+    </div>
 
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              {{ isEdit ? "Modifier la photo" : "Ajouter une photo" }}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Titre de l'image</label>
+              <input
+                v-model="form.title"
+                class="form-control"
+                placeholder="Ex: Salle principale du restaurant"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Fichier Image {{ isEdit ? '(Optionnel)' : '' }}</label>
+              <input
+                type="file"
+                class="form-control"
+                ref="fileInput"
+                accept="image/*"
+                @change="handleFile"
+              />
+            </div>
+
+            <button
+              class="btn btn-primary w-100"
+              @click="save"
+              :disabled="loading || (!isEdit && !selectedFile) || !form.title"
+              data-bs-dismiss="modal"
+            >
+              <span v-if="loading">Enregistrement...</span>
+              <span v-else>Enregistrer</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content text-center">
+
+          <div class="modal-header">
+            <h5 class="modal-title">Supprimer l'image ?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <p v-if="deleteTarget">Voulez-vous vraiment supprimer "<strong>{{ deleteTarget.titre }}</strong>" ?</p>
+            <div class="mt-3">
+              <button
+                class="btn btn-danger me-2"
+                @click="remove"
+                data-bs-dismiss="modal"
+                :disabled="loading"
+              >
+                Supprimer
+              </button>
+              <button class="btn btn-secondary" data-bs-dismiss="modal" :disabled="loading">
+                Annuler
+              </button>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
   </div>
-
-</div>
-
-<!-- Modal edition -->
-<div class="modal fade" id="EditionPhotoModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">
-          {{ editMode ? "Modifier la photo" : "Ajouter une photo" }}
-        </h5>
-      </div>
-
-      <div class="modal-body">
-
-        <div class="mb-3">
-          <label class="form-label">Titre</label>
-          <input
-            v-model="form.titre"
-            type="text"
-            class="form-control"
-          >
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Image</label>
-          <input
-            type="file"
-            class="form-control"
-            @change="handleFile"
-          >
-        </div>
-
-        <div class="text-center">
-          <button
-            class="btn btn-primary"
-            @click="saveImage"
-            data-bs-dismiss="modal"
-          >
-            Enregistrer
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal suppression -->
-<div class="modal fade" id="SuppressionPhotoModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5>Supprimer cette photo ?</h5>
-      </div>
-
-      <div class="modal-body text-center">
-
-        <button
-          class="btn btn-danger me-2"
-          @click="deleteImage"
-          data-bs-dismiss="modal"
-        >
-          Supprimer
-        </button>
-
-        <button
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-        >
-          Annuler
-        </button>
-
-      </div>
-
-    </div>
-  </div>
-</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, onMounted } from "vue"
 
-const isAdmin = true
-
-const images = ref([
-{
-titre: "Chef cuisinier",
-url: "https://picsum.photos/400/300"
+/* TYPES */
+interface ApiPicture {
+  id: number
+  titre: string
+  url: string
 }
-])
 
-const editMode = ref(false)
-const editIndex = ref<number | null>(null)
+/* STATE */
+const isAdmin = true
+const loading = ref(false)
+const images = ref<ApiPicture[]>([])
 
-const deleteIndex = ref<number | null>(null)
+const isEdit = ref(false)
+const selectedFile = ref<File | null>(null)
+const selectedId = ref<number | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const form = ref({
-titre: "",
-url: ""
+  id: null as number | null,
+  title: ""
 })
 
-function handleFile(event:any){
+const deleteTarget = ref<ApiPicture | null>(null)
 
-const file = event.target.files[0]
+/* API BASE URL */
+const API = "http://localhost:8000/api/picture"
 
-if(file){
-form.value.url = URL.createObjectURL(file)
+/* FUNCTIONS */
+
+// Réinitialiser le champ de fichier html natif
+function resetFileInput() {
+  if (fileInput.value) {
+    fileInput.value.value = ""
+  }
+  selectedFile.value = null
 }
 
+// Charger le catalogue d'images
+async function load() {
+  loading.value = true
+  try {
+    const res = await fetch(API)
+    if (!res.ok) throw new Error("Erreur lors de la récupération des données.")
+    images.value = await res.json()
+  } catch (e) {
+    console.error("LOAD ERROR:", e)
+  } finally {
+    loading.value = false
+  }
 }
 
-function prepareAdd(){
-
-editMode.value = false
-
-form.value = {
-titre:"",
-url:""
+// Capturer le fichier sélectionné
+function handleFile(e: Event) {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    selectedFile.value = target.files[0]
+  }
 }
 
+// Préparer l'ouverture du modal en création
+function openCreate() {
+  isEdit.value = false
+  selectedId.value = null
+  resetFileInput()
+  form.value = {
+    id: null,
+    title: ""
+  }
 }
 
-function prepareEdit(image:any,index:number){
-
-editMode.value = true
-editIndex.value = index
-
-form.value = {...image}
-
+// Préparer l'ouverture du modal en édition
+function openEdit(img: ApiPicture) {
+  isEdit.value = true
+  selectedId.value = img.id
+  resetFileInput()
+  form.value = {
+    id: img.id,
+    title: img.titre
+  }
 }
 
-function saveImage(){
+// Soumettre le formulaire (Création ou Édition)
+async function save() {
+  // Sécurité basique avant envoi
+  if (!form.value.title) return
+  if (!isEdit.value && !selectedFile.value) return
 
-if(editMode.value && editIndex.value !== null){
+  loading.value = true
 
-images.value[editIndex.value] = {...form.value}
+  const formData = new FormData()
+  formData.append("title", form.value.title)
+  formData.append("restaurant_id", "1") // ID statique ou dynamique selon vos besoins globaux
 
-}else{
+  if (selectedFile.value) {
+    formData.append("image", selectedFile.value)
+  }
 
-images.value.push({...form.value})
+  // NOTE backend : Les deux routes utilisent la méthode POST pour le multipart/form-data
+  const url = isEdit.value && selectedId.value
+    ? `${API}/${selectedId.value}`
+    : `${API}/create`
 
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.message || "Erreur lors de la sauvegarde")
+    }
+
+  } catch (e) {
+    console.error("SAVE ERROR:", e)
+  } finally {
+    resetFileInput()
+    await load()
+  }
 }
 
+// Préparer la suppression
+function setDelete(img: ApiPicture) {
+  deleteTarget.value = img
 }
 
-function prepareDelete(index:number){
+// Exécuter la suppression
+async function remove() {
+  if (!deleteTarget.value) return
 
-deleteIndex.value = index
+  loading.value = true
+  try {
+    const response = await fetch(`${API}/${deleteTarget.value.id}`, {
+      method: "DELETE"
+    })
 
+    if (!response.ok) throw new Error("Impossible de supprimer la ressource.")
+  } catch (e) {
+    console.error("DELETE ERROR:", e)
+  } finally {
+    deleteTarget.value = null
+    await load()
+  }
 }
 
-function deleteImage(){
-
-if(deleteIndex.value !== null){
-
-images.value.splice(deleteIndex.value,1)
-
-}
-
-}
+/* INITIALISATION */
+onMounted(load)
 </script>
