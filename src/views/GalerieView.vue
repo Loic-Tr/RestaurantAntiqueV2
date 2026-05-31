@@ -184,7 +184,7 @@ function resetFileInput() {
 async function load() {
   loading.value = true
   try {
-    const res = await fetch(API)
+    const res = await fetch(`${API}/list`)
     if (!res.ok) throw new Error("Erreur lors de la récupération des données.")
     images.value = await res.json()
   } catch (e) {
