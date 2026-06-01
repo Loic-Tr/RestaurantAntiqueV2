@@ -142,6 +142,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
+import {getAdminStatus} from "@/services/authService"
+import { useToast } from "vue-toastification"
 
 /* TYPES */
 interface ApiPicture {
@@ -151,7 +153,7 @@ interface ApiPicture {
 }
 
 /* STATE */
-const isAdmin = true
+const isAdmin = ref(false)
 const loading = ref(false)
 const images = ref<ApiPicture[]>([])
 
