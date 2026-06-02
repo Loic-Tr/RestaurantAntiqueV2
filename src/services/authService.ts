@@ -47,7 +47,7 @@ export async function loginRequest(email: string, password: string) {
 
   const data = await response.json()
 
-  setAuth(data.token, data.roles[0])
+  setAuth(data.apiToken, data.roles[0])
 
   return data
 }
