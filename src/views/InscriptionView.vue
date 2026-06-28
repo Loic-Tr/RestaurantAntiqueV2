@@ -205,7 +205,7 @@ export default defineComponent({
       try {
 
         const response = await fetch(
-          "http://localhost:8000/api/registration",
+          "https://main-bvxea6i-lqgvam637pyno.fr-4.platformsh.site/api/registration",
           {
             method: "POST",
 

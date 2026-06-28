@@ -2,7 +2,7 @@ import { ref } from "vue"
 
 const TOKEN_KEY = "accesstoken"
 const ROLE_KEY = "role"
-const API_URL = "http://127.0.0.1:8000/api/"
+const API_URL = "https://main-bvxea6i-lqgvam637pyno.fr-4.platformsh.site/api/"
 
 // 🔥 état réactif
 export const isAuthenticated = ref(!!localStorage.getItem(TOKEN_KEY))
