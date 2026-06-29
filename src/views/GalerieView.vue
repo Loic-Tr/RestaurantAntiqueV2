@@ -236,7 +236,7 @@ async function save() {
 
   const formData = new FormData()
   formData.append("title", form.value.title)
-  formData.append("restaurant_id", "1") // ID statique ou dynamique selon vos besoins globaux
+  formData.append("restaurant_id", "2") 
 
   if (selectedFile.value) {
     formData.append("image", selectedFile.value)
