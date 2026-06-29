@@ -291,5 +291,8 @@ async function remove() {
 }
 
 /* INITIALISATION */
-onMounted(load)
+onMounted(async () => {
+  isAdmin.value = await getAdminStatus()
+  await load()
+})
 </script>

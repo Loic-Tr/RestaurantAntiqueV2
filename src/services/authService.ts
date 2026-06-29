@@ -51,3 +51,7 @@ export async function loginRequest(email: string, password: string) {
 
   return data
 }
+
+export function getAdminStatus(): boolean {
+  return userRole.value === "Admin"
+}
