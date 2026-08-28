@@ -170,7 +170,7 @@ const form = ref({
 const deleteTarget = ref<ApiPicture | null>(null)
 
 /* API BASE URL */
-const API = "https://main-bvxea6i-lqgvam637pyno.fr-4.platformsh.site/api/picture"
+const API = "https://main-bvxea6i-bay2iwxxnlrn6.fr-3.platformsh.site/api/picture"
 
 /* FUNCTIONS */
 
