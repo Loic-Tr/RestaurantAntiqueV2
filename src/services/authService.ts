@@ -2,7 +2,7 @@ import { ref } from "vue"
 
 const TOKEN_KEY = "accesstoken"
 const ROLE_KEY = "role"
-const API_URL = "https://main-bvxea6i-bay2iwxxnlrn6.fr-3.platformsh.site//api/"
+const API_URL = "https://main-bvxea6i-bay2iwxxnlrn6.fr-3.platformsh.site/api/"
 
 // 🔥 état réactif
 export const isAuthenticated = ref(!!localStorage.getItem(TOKEN_KEY))
@@ -53,5 +53,5 @@ export async function loginRequest(email: string, password: string) {
 }
 
 export function getAdminStatus(): boolean {
-  return userRole.value === "Admin"
+  return userRole.value === "admin"
 }
