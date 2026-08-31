@@ -236,7 +236,7 @@ async function save() {
 
   const formData = new FormData()
   formData.append("title", form.value.title)
-  formData.append("restaurant_id", "3") 
+  formData.append("restaurant_id", "1") 
 
   if (selectedFile.value) {
     formData.append("image", selectedFile.value)
